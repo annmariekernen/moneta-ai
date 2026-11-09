@@ -1,0 +1,21 @@
+// Cloudflare Workers config for the Moneta AI prototype. `npm run build`
+// makes dist/ (the app); the Worker in worker/index.js serves it and runs
+// the chat at /api/moneta.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "moneta-ai",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  // Moneta's personality and demo data are .md files the Worker imports as text
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  // At most 8 messages a minute per visitor, since each one costs money.
+  // The Claude API key is the ANTHROPIC_API_KEY secret.
+  "ratelimits": [{ "name": "MONETA_LIMITER", "namespace_id": "1001", "simple": { "limit": 8, "period": 60 } }],
+  "observability": { "enabled": true }
+}

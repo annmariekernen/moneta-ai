@@ -1,0 +1,73 @@
+/* Moneta design tokens (Tailwind v4). One place for every visual decision:
+   each token becomes a utility, e.g. --color-accent → bg-accent / text-accent,
+   --radius-card → rounded-card, --shadow-float → shadow-float.
+   Direction: "quiet fintech". Cool neutrals carry the UI, one blue accent
+   marks what's interactive or selected, almost no shadows, Inter for all UI
+   text (Zalando Sans only for the brand name).
+   Mirror these names in Figma variables. */
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /* Brand only: the "Moneta" name next to the logo (Wordmark), never UI text */
+  --font-brand: "Zalando Sans", "Inter", sans-serif;
+  --tracking-brand: -0.04em;
+
+  /* Neutrals (cool gray) */
+  --color-page: #fafbfc;        /* app background */
+  --color-surface: #ffffff;     /* cards, sheets */
+  --color-subtle: #f1f3f6;      /* quiet fills: inputs, pressed, tracks */
+  --color-line: #e4e7ec;        /* hairlines, card borders */
+  --color-line-strong: #d0d5dd; /* input borders, dividers that need weight */
+  --color-fg: #101828;          /* primary text */
+  --color-fg-2: #475467;        /* secondary text */
+  --color-fg-3: #667085;        /* tertiary: meta, captions */
+  --color-fg-4: #98a2b3;        /* placeholder, disabled */
+
+  /* Accent: the one color for interactive / selected */
+  --color-accent: #2f5bea;
+  --color-accent-hover: #2449c7;
+  --color-accent-soft: #eef2fe; /* selected backgrounds */
+
+  /* Meaning */
+  --color-positive: #067647;    /* money in */
+  --color-positive-soft: #ecfdf3;
+  --color-negative: #b42318;    /* errors, over budget */
+  --color-negative-soft: #fef3f2;
+  --color-warning: #b54708;     /* over budget (gentle, not an error) */
+  --color-warning-soft: #fffaeb;
+
+  /* Category hues: icon in the hue, on a soft tint of it */
+  --color-cat-blue: #2f6fdb;   --color-cat-blue-soft: #e8f0fc;
+  --color-cat-teal: #0e8a7e;   --color-cat-teal-soft: #e3f5f2;
+  --color-cat-green: #2f8a3e;  --color-cat-green-soft: #e8f5ea;
+  --color-cat-amber: #b7790b;  --color-cat-amber-soft: #fbf3e2;
+  --color-cat-orange: #d1531f; --color-cat-orange-soft: #fcede6;
+  --color-cat-rose: #c8355b;   --color-cat-rose-soft: #fbe9ee;
+  --color-cat-violet: #6b4fd8; --color-cat-violet-soft: #efecfc;
+  --color-cat-slate: #475467;  --color-cat-slate-soft: #eef0f3;
+
+  /* Type scale (size / line height). Weights: regular (400) for reading
+     text, medium (500) for titles, labels and emphasis. Never semibold or bold. */
+  --text-display: 28px;  --text-display--line-height: 34px;  /* big numbers */
+  --text-title: 20px;    --text-title--line-height: 28px;    /* screen titles */
+  --text-headline: 16px; --text-headline--line-height: 22px; /* card titles */
+  --text-body: 15px;     --text-body--line-height: 22px;     /* reading text */
+  --text-label: 13px;    --text-label--line-height: 18px;    /* rows, buttons, chips */
+  --text-caption: 12px;  --text-caption--line-height: 16px;  /* meta, dates */
+
+  /* Radii */
+  --radius-control: 10px; /* buttons, inputs, icon tiles */
+  --radius-card: 16px;    /* cards */
+  --radius-sheet: 24px;   /* bottom sheet top corners */
+
+  /* Shadows: only for things that float above the page */
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-float: 0 8px 24px rgb(16 24 40 / 0.08), 0 2px 6px rgb(16 24 40 / 0.04);
+}
+
+/* Money uses tabular figures so columns of amounts line up */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
