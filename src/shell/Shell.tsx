@@ -30,11 +30,15 @@ export function LiveBadge({ onClick }: { onClick?: () => void }) {
 function DemoStarts() {
   return (
     <div>
-      <p className="text-caption text-fg-3">Jump to a point in the prototype</p>
-      <div className="mt-1.5 flex flex-wrap gap-1.5">
-        <Button size="sm" onClick={() => startFrom("budget")}>Build a budget</Button>
-        <Button size="sm" onClick={() => startFrom("done")}>Fully set up</Button>
-        <Button size="sm" variant="ghost" icon={<RotateCcw size={13} />} onClick={resetDemo}>Reset</Button>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-caption text-fg-3">Jump to a point in the prototype</p>
+        <button className="flex shrink-0 items-center gap-1 text-caption font-medium text-fg-3 hover:text-fg" onClick={resetDemo}>
+          <RotateCcw size={12} aria-hidden="true" /> Reset
+        </button>
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-1.5">
+        <Button size="sm" className="w-full whitespace-nowrap" onClick={() => startFrom("budget")}>Build a budget</Button>
+        <Button size="sm" className="w-full whitespace-nowrap" onClick={() => startFrom("done")}>Fully set up</Button>
       </div>
     </div>
   );
@@ -80,12 +84,12 @@ export function AboutCard() {
         <DemoStarts />
       </div>
       {/* Back to the case study, and the code */}
-      <div className="flex items-center justify-between gap-3 border-t border-line pt-2.5 text-label font-medium">
-        <a className="flex items-center gap-1 text-fg no-underline hover:text-accent" href={PORTFOLIO_URL}>
+      <div className="flex items-center justify-between gap-2 border-t border-line pt-2.5 text-label font-medium">
+        <a className="flex items-center gap-1 whitespace-nowrap text-fg no-underline hover:text-accent" href={PORTFOLIO_URL}>
           <ArrowLeft size={14} strokeWidth={1.75} aria-hidden="true" />
           Back to portfolio
         </a>
-        <a className="flex items-center gap-1.5 text-fg no-underline hover:text-accent" href="https://github.com/annmariekernen/moneta-ai" target="_blank" rel="noopener">
+        <a className="flex items-center gap-1.5 whitespace-nowrap text-fg no-underline hover:text-accent" href="https://github.com/annmariekernen/moneta-ai" target="_blank" rel="noopener">
           <Github size={14} strokeWidth={1.75} aria-hidden="true" />
           View on GitHub <span aria-hidden="true">↗</span>
         </a>

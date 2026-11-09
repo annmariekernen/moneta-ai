@@ -14,7 +14,7 @@ import { edit, useEdits } from "../store";
 export function TransactionSheet({ txn, onClose, onAsk }: { txn: Transaction | null; onClose: () => void; onAsk: (question: string) => void }) {
   const { rules, categories: mine } = useEdits();
   const [editing, setEditing] = useState(false);
-  useEffect(() => setEditing(false), [txn?.id]); // closed again for each transaction
+  useEffect(() => { setEditing(false); }, [txn?.id]); // closed again for each transaction
   const current: CategoryId = txn ? categoryOf(txn, rules) : "misc";
   // Her categories (not income or transfers), plus this one's if she dropped it
   const choices = mine.includes(current) || current === "income" || current === "transfer" ? mine : [...mine, current];
@@ -25,7 +25,7 @@ export function TransactionSheet({ txn, onClose, onAsk }: { txn: Transaction | n
     const t = setTimeout(() => setJustSaved(false), 1600);
     return () => clearTimeout(t);
   }, [justSaved]);
-  useEffect(() => setJustSaved(false), [txn?.id]);
+  useEffect(() => { setJustSaved(false); }, [txn?.id]);
   const setCategory = (c: CategoryId) =>
     txn && edit((e) => ({ ...e, rules: { ...e.rules, moves: { ...e.rules.moves, [txn.id]: c } } }));
   const date = txn && new Date(txn.date + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });

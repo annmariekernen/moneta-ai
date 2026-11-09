@@ -86,7 +86,7 @@ export function Chat({ open, onMinimize, prefill }: { open: boolean; onMinimize:
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Save the conversation whenever it changes
-  useEffect(() => save(memory), [memory]);
+  useEffect(() => { save(memory); }, [memory]);
 
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
@@ -311,7 +311,7 @@ export function Chat({ open, onMinimize, prefill }: { open: boolean; onMinimize:
                 <>
                   <MonetaMessage>
                     {m.fresh ? (
-                      <TypedText text={m.reply.text} from={m.typedFrom ?? 0} skipN={skipN} onGrow={() => bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight })} onDone={() => { setMsg(i, { fresh: false }); chipsSoon(); }} />
+                      <TypedText text={m.reply.text} from={m.typedFrom ?? 0} skipN={skipN} onGrow={() => { bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight }); }} onDone={() => { setMsg(i, { fresh: false }); chipsSoon(); }} />
                     ) : (
                       <RichText text={m.reply.text} />
                     )}
@@ -408,7 +408,9 @@ function TypedText({ text, from, skipN, onGrow, onDone }: { text: string; from: 
     const timer = setTimeout(() => setShown(to), WORD_MS);
     return () => clearTimeout(timer);
   }, [shown, text.length]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(onGrow, [shown]); // eslint-disable-line react-hooks/exhaustive-deps
+  // (braces: an effect must return nothing or a cleanup, and newer browsers
+  // return a Promise from scrollTo)
+  useEffect(() => { onGrow(); }, [shown]); // eslint-disable-line react-hooks/exhaustive-deps
   return <RichText text={closeBold(text.slice(0, shown))} />;
 }
 
