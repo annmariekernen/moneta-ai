@@ -130,3 +130,59 @@ export function contextForMoneta(e: Edits): string {
   if (amounts.length) lines.push(`Her monthly budget per category: ${amounts.map(([c, v]) => `${label(c)} ${money(v)}`).join(", ")}.`);
   return lines.join("\n").slice(0, 4000);
 }
+
+/* ---------- Money in: received, and paychecks Moneta expects ---------- */
+// Used by the Budget tab layouts that show income next to spending.
+
+export type IncomeItem = { id: string; merchant: string; amount: number; date: string; received: boolean };
+
+// Paychecks repeat on a steady gap (Lois: every 14 days). A source counts as
+// a paycheck once it's come in 3+ times; the next one is the last date plus
+// the gap between the last two. Only the current month gets expected ones.
+const paychecks = (() => {
+  const by: Record<string, Transaction[]> = {};
+  for (const t of transactions) if (t.kind === "income" && t.amount > 0) (by[t.merchant] ??= []).push(t); // newest first
+  return Object.values(by).filter((list) => list.length >= 3);
+})();
+
+const addDays = (iso: string, days: number) => {
+  const d = new Date(iso + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+
+export function incomeMonth(m: string) {
+  const items: IncomeItem[] = transactions
+    .filter((t) => t.date.startsWith(m) && t.kind === "income" && t.amount > 0)
+    .map((t) => ({ id: t.id, merchant: t.merchant, amount: t.amount, date: t.date, received: true }));
+  if (m === thisMonth) {
+    for (const [last, before] of paychecks) {
+      const gap = Math.round((Date.parse(last.date) - Date.parse(before.date)) / 86400000);
+      if (gap < 5) continue;
+      for (let d = addDays(last.date, gap); d.startsWith(m); d = addDays(d, gap)) {
+        if (d > today) items.push({ id: `expected-${last.merchant}-${d}`, merchant: last.merchant, amount: last.amount, date: d, received: false });
+      }
+    }
+  }
+  items.sort((a, b) => (a.date < b.date ? -1 : 1));
+  const received = items.filter((i) => i.received).reduce((s, i) => s + i.amount, 0);
+  const expected = items.reduce((s, i) => s + i.amount, 0);
+  const next = items.find((i) => !i.received);
+  return { items, received, expected, next };
+}
+
+/* ---------- One month, the way the Budget tab shows it ---------- */
+// Every category's progress, each bill (paid or coming up, across all bill
+// categories, by date), and money in (BudgetTabs.tsx)
+
+export function monthSplit(e: Edits, m: string) {
+  const b = categoryMonth(e, m);
+  const bills = b.rows.filter((r) => isBill(e, r.category));
+  const items = bills.flatMap((r) => billItems(r.category, m, e.rules).map((it) => ({ ...it, category: r.category })));
+  return {
+    ...b,
+    billItems: items.sort((a, z) => (a.date < z.date ? -1 : 1)),
+    income: incomeMonth(m),
+  };
+}
+export type MonthSplit = ReturnType<typeof monthSplit>;

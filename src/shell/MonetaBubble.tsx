@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import { Typing } from "../components/Typing";
 import { useEdits } from "../store";
 
-// PLACEHOLDER copy
+// Ann Marie's copy
 const NUDGES = {
-  "first-draft": "Your first budget draft is ready! Want to change anything? Just ask me.",
+  "first-draft": "Your budget is ready! 🎉 If you want to make changes, I’m here to help.",
 };
 const START_AFTER_MS = 900; // the flow's slide-out (0.42s) plus half a second
 const STAY_MS = 3000; // after it's done typing

@@ -16,7 +16,6 @@ import { Camera, ChevronLeft, ChevronRight, FileSpreadsheet, FileText, FolderOpe
 import goose from "../assets/goose-glasses-circle.svg";
 import { DemoNote } from "../components/DemoNote";
 import { OrDivider } from "../components/OrDivider";
-import readingGoose from "../assets/goose-glasses.svg?raw";
 import { importedBudget } from "../data";
 
 // How she brought it in, so the editor can say where the rows came from
@@ -322,7 +321,7 @@ function PretendPaper({ scanning = false }: { scanning?: boolean }) {
         <span className="absolute inset-y-0 left-3 border-l border-[#f3c9c9]" />
         <span className="scan-line" />
       </div>
-      <span className="reading-goose absolute -right-7 -bottom-5 size-16 drop-shadow-md" dangerouslySetInnerHTML={{ __html: readingGoose }} />
+      <img src={goose} alt="" className="absolute -right-7 -bottom-5 size-16 drop-shadow-md" />
     </div>
   );
 }

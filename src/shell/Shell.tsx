@@ -72,29 +72,42 @@ export function LiveNotice({ onClose }: { onClose: () => void }) {
 // Ann Marie's portfolio (the case study this prototype belongs to)
 const PORTFOLIO_URL = "https://annmariekernen.com";
 
+// Two cards stacked: what this is (with the links back to the portfolio and
+// the code), then the demo starting points.
+const sideCard = "flex flex-col gap-2.5 rounded-card border border-line bg-surface/90 p-4.5 shadow-float backdrop-blur";
+
 export function AboutCard() {
   return (
-    <aside className="about-card flex-col gap-2.5 rounded-card border border-line bg-surface/90 p-4.5 shadow-float backdrop-blur" aria-label="About this prototype">
-      <LiveBadge />
-      <h2 className="text-headline font-medium">This is a working prototype</h2>
-      <p className="text-label text-fg-2">
-        Moneta’s AI chat is hooked up to the Claude API, so its replies are written live in response to your questions. All account data is fictional for demo purposes.
-      </p>
-      <div className="border-t border-line pt-2.5">
-        <DemoStarts />
-      </div>
-      {/* Back to the case study, and the code */}
-      <div className="flex items-center justify-between gap-2 border-t border-line pt-2.5 text-label font-medium">
-        <a className="flex items-center gap-1 whitespace-nowrap text-fg no-underline hover:text-accent" href={PORTFOLIO_URL}>
-          <ArrowLeft size={14} strokeWidth={1.75} aria-hidden="true" />
-          Back to portfolio
-        </a>
-        <a className="flex items-center gap-1.5 whitespace-nowrap text-fg no-underline hover:text-accent" href="https://github.com/annmariekernen/moneta-ai" target="_blank" rel="noopener">
-          <Github size={14} strokeWidth={1.75} aria-hidden="true" />
-          View on GitHub <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </aside>
+    <div className="about-card flex-col gap-3">
+      <aside className={sideCard} aria-label="About this prototype">
+        <LiveBadge />
+        <h2 className="text-headline font-medium">This is a working prototype</h2>
+        <p className="text-label text-fg-2">
+          Moneta’s AI chat is hooked up to the Claude API, so its replies are written live in response to your questions. All account data is fictional for demo purposes.
+        </p>
+        {/* Back to the case study, and the code */}
+        <div className="flex items-center justify-between gap-2 border-t border-line pt-2.5 text-label font-medium">
+          <a className="flex items-center gap-1 whitespace-nowrap text-fg no-underline hover:text-accent" href={PORTFOLIO_URL}>
+            <ArrowLeft size={14} strokeWidth={1.75} aria-hidden="true" />
+            Back to portfolio
+          </a>
+          <a className="flex items-center gap-1.5 whitespace-nowrap text-fg no-underline hover:text-accent" href="https://github.com/annmariekernen/moneta-ai" target="_blank" rel="noopener">
+            <Github size={14} strokeWidth={1.75} aria-hidden="true" />
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </aside>
+
+      {/* Demo starting points (also as links: ?start=budget, ?start=done) */}
+      <aside className={sideCard} aria-label="Jump to a point in the prototype">
+        <p className="text-label text-fg-3">Jump to a point in the prototype</p>
+        <div className="grid grid-cols-2 gap-1.5">
+          <Button size="sm" className="w-full whitespace-nowrap" onClick={() => startFrom("budget")}>Build a budget</Button>
+          <Button size="sm" className="w-full whitespace-nowrap" onClick={() => startFrom("done")}>Fully set up</Button>
+        </div>
+        <Button size="sm" className="w-full" icon={<RotateCcw size={12} aria-hidden="true" />} onClick={resetDemo}>Reset</Button>
+      </aside>
+    </div>
   );
 }
 

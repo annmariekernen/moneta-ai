@@ -9,7 +9,8 @@
 // mostly done with Moneta, or by hand on each category's page.
 // Sorting: one merchant per screen, Moneta's recommendation preselected, the
 // likely runner-ups, "Not sure / it depends / skip". After each set of 10,
-// "First draft done" shows on the next question with View draft.
+// "Your budget is ready!" shows on the next question with View draft; after that,
+// a one-row version of it stays on every question.
 // The logic lives in src/build.ts. Copy marked PLACEHOLDER is for Ann Marie
 // to reword.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -113,7 +114,7 @@ function Flow({ mode, onClose: close, onDone: done }: { mode: BuildMode; onClose
   // PLACEHOLDER copy
   const titles: Record<Step, string> = { import: "", intro: "Budget with Moneta", teach: "Budget with Moneta" };
   // Progress counts up across sets: 1 of 10 ... 10 of 10, then 11 of 20
-  // (with "First draft done" on top), 21 of 30...
+  // (with "Your budget is ready!" on top), 21 of 30...
   const shown = at; // the question on screen
   const number = shown + 1;
   const outOf = Math.min(Math.ceil(number / SET_SIZE) * SET_SIZE, list.length);
@@ -133,11 +134,17 @@ function Flow({ mode, onClose: close, onDone: done }: { mode: BuildMode; onClose
         />
       ) : (
         <>
-          {/* Title, and X to leave (after a warning) */}
+          {/* Title, and X to leave. Before the first draft: after a warning
+              (her answers would be lost). Once the first draft is done (past
+              the first set): X is the same as View draft, answers kept. */}
           <div className="px-4 pt-2 pb-2">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-title font-medium">{titles[step]}</h2>
-              <button className="-mr-2 grid size-9 place-items-center rounded-control text-fg-2 hover:bg-subtle" onClick={() => (step === "intro" && Object.keys(answers).length === 0 ? onClose() : setLeaving(true))} aria-label="Leave">
+              <button
+                className="-mr-2 grid size-9 place-items-center rounded-control text-fg-2 hover:bg-subtle"
+                onClick={() => (step === "teach" && at >= SET_SIZE ? toBudget("spinner") : step === "intro" && Object.keys(answers).length === 0 ? onClose() : setLeaving(true))}
+                aria-label={step === "teach" && at >= SET_SIZE ? "Done, view draft" : "Leave"}
+              >
                 <X size={20} />
               </button>
             </div>
@@ -171,6 +178,7 @@ function Flow({ mode, onClose: close, onDone: done }: { mode: BuildMode; onClose
                 onCreate={(c) => { setLooks((l) => ({ ...l, [c.id]: c })); setExtra((x) => [...x, c.id]); }}
                 previous={answers[list[shown].merchant]}
                 firstDraftDone={at > 0 && at % SET_SIZE === 0}
+                draftReady={at >= SET_SIZE}
                 onView={() => toBudget("spinner")}
                 onBack={() => (at === 0 ? setStep("intro") : setAt(at - 1))}
                 onNext={(a) => { setAnswers((x) => ({ ...x, [list[shown].merchant]: a })); setAt(at + 1); }}
@@ -310,13 +318,14 @@ function Intro({ sheetName, animate, onBack, onStart, onSkip }: { sheetName?: st
 
 // One merchant. Moneta's recommendation first, then the rest of her
 // categories, then "It varies". Nothing selected until she picks.
-function Ask({ q, cats, looks, onCreate, previous, firstDraftDone, onView, onBack, onNext }: {
+function Ask({ q, cats, looks, onCreate, previous, firstDraftDone, draftReady, onView, onBack, onNext }: {
   q: Question;
   cats: CategoryId[];
   looks: Looks;
   onCreate: (c: CustomCategory) => void;
   previous?: Answer;
   firstDraftDone: boolean;
+  draftReady: boolean; // past the first set: the draft stays one tap away
   onView: () => void;
   onBack: () => void;
   onNext: (a: Answer) => void;
@@ -344,13 +353,20 @@ function Ask({ q, cats, looks, onCreate, previous, firstDraftDone, onView, onBac
   return (
     <>
       <div className="flex-1 overflow-y-auto px-4 pb-6">
+        {/* Once she keeps going, the note shrinks to one row so View draft
+            (her way out with the draft) stays within reach */}
+        {draftReady && !firstDraftDone && (
+          <MonetaNote compact className="mb-4" action={<Button size="sm" variant="primary" onClick={onView}>View draft</Button>}>
+            <strong>Your budget is ready!</strong>
+          </MonetaNote>
+        )}
         {firstDraftDone && (
           <MonetaNote
             className="pop-in mb-4"
             action={<Button size="sm" variant="primary" onClick={onView}>View draft</Button>}
           >
-            {/* PLACEHOLDER copy, except "First draft done" */}
-            <strong>First draft done.</strong> View your draft now, or keep going for a more accurate budget.
+            {/* Ann Marie's copy */}
+            <strong>Your budget is ready!</strong> View your budget now, or keep going for more accurate results.
           </MonetaNote>
         )}
 

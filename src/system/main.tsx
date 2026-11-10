@@ -16,6 +16,7 @@ import { Typing } from "../components/Typing";
 import { ActionCard } from "../components/ActionCard";
 import { MonetaButton } from "../components/MonetaButton";
 import { Tabs } from "../components/Tabs";
+import { SubtleTabs } from "../components/SubtleTabs";
 import { TransactionRow } from "../components/TransactionRow";
 import { Wordmark } from "../components/Wordmark";
 import { AccountIcon } from "../components/AccountIcon";
@@ -58,6 +59,7 @@ function Label({ children }: { children: ReactNode }) {
 
 function System() {
   const [tab, setTab] = useState<"out" | "in">("out");
+  const [subtle, setSubtle] = useState<"all" | "income" | "expenses">("all");
   const [on, setOn] = useState(true);
   const [month, setMonth] = useState(1);
   return (
@@ -161,6 +163,10 @@ function System() {
           </div>
           <div className="mt-6"><Label>Tabs</Label></div>
           <Tabs options={[{ value: "out", label: "Outgoing" }, { value: "in", label: "Incoming" }]} value={tab} onChange={setTab} />
+          <div className="mt-6"><Label>Subtle tabs (filter one list within a page)</Label></div>
+          <div className="max-w-[402px]">
+            <SubtleTabs options={[{ value: "all", label: "All" }, { value: "income", label: "Income" }, { value: "expenses", label: "Expenses" }]} value={subtle} onChange={setSubtle} />
+          </div>
         </Section>
 
         <Section title="Cards & rows">
@@ -237,12 +243,13 @@ function System() {
             <ChatInput defaultValue="What about restaurants?" />
           </div>
         </Section>
-        <Section title="Moneta notes" note="Moneta talking inside a screen (not the chat): the goose and its name on top, the message at reading size, an optional action.">
+        <Section title="Moneta notes" note="Moneta talking inside a screen (not the chat): the goose and its name on top, the message at reading size, an optional action. Compact: one row, for a note she's seen that stays within reach.">
           <div className="max-w-[420px] space-y-3">
             <MonetaNote>
               <Typing paragraphs={[{ text: "Hi! I'm here to help build a budget that’s right for you.", className: "text-headline font-medium" }, { text: "Text can type itself out, like a chat reply (Typing).", ms: 12 }]} />
             </MonetaNote>
-            <MonetaNote action={<Button size="sm" variant="primary">View draft</Button>}>First draft done. View your draft, or keep going for a more accurate budget.</MonetaNote>
+            <MonetaNote action={<Button size="sm" variant="primary">View draft</Button>}><strong>Your budget is ready!</strong> View your budget now, or keep going for more accurate results.</MonetaNote>
+            <MonetaNote compact action={<Button size="sm" variant="primary">View draft</Button>}><strong>Your budget is ready!</strong></MonetaNote>
           </div>
         </Section>
       </div>
